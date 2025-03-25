@@ -75,3 +75,4 @@ interface TrendingCardProps {
   movie: TrendingMovie;
   index: number;
 }
+
