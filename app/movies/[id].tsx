@@ -116,8 +116,8 @@ const MovieDetail = () => {
                     <MovieInfo label="Countries" value={movies?.production_countries?.map((p) => p.name).join('  ●  ') || "N/A"} />
                     
                     <View className="flex flex-row justify-between w-1/2 gap-5">
-                        <MovieInfo label="Budget" value={`$${movies?.budget / 1_000_000} million`} />
-                        <MovieInfo label="Revenue" value={`$${movies?.revenue / 1_000_000} million`} />
+                        <MovieInfo label="Budget" value={`$${movies?.budget! / 1_000_000} million`} />
+                        <MovieInfo label="Revenue" value={`$${movies?.revenue! / 1_000_000} million`} />
                     </View>
 
                     <MovieInfo label="Tagline" value={movies?.tagline} />
