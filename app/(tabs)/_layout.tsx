@@ -101,20 +101,6 @@ const _Layout = () => {
                     }
                 }}
             />
-             <Tabs.Screen
-                name="favourite"
-                options={{
-                    title: 'Activity',
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => {
-                        return <TabIcon
-                                    focused={focused}
-                                    icon={icons.person}
-                                    title="Activity"
-                                />;
-                    }
-                }}
-            />
         </Tabs>
 
     )
