@@ -1,10 +1,7 @@
 import { Client, Databases, ID, Query } from "react-native-appwrite";
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!;
-const COLLECTION_ID = {
-  metrics: process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID_metrics!,
-  saveMovie: process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID_savemovie!
-};
+const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!;
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -14,7 +11,7 @@ const database = new Databases(client);
 
 export const updateSearchCount = async (query: string, movie: Movie) => {
   try {
-    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID.metrics, [
+    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
       Query.equal("searchTerm", query),
     ]);
     
@@ -22,14 +19,14 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
       const existingMovie = result.documents[0];
       await database.updateDocument(
         DATABASE_ID,
-        COLLECTION_ID.metrics,
+        COLLECTION_ID,
         existingMovie.$id,
         {
           count: existingMovie.count + 1,
         }
       );
     } else {
-      await database.createDocument(DATABASE_ID, COLLECTION_ID.metrics, ID.unique(), {
+      await database.createDocument(DATABASE_ID, COLLECTION_ID, ID.unique(), {
         searchTerm: query,
         movie_id: movie.id,
         title: movie.title,
@@ -47,7 +44,7 @@ export const getTrendingMovies = async (): Promise<
   TrendingMovie[] | undefined
 > => {
   try {
-    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID.metrics, [
+    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
       Query.limit(7),
       Query.orderDesc("count"),
     ]);
@@ -62,13 +59,13 @@ export const getTrendingMovies = async (): Promise<
 export const saveMovie = async (movie: Movie) => {
   try {
     // Check if the movie is already saved or not.
-    const existingMovie = await database.listDocuments(DATABASE_ID, COLLECTION_ID.saveMovie, [
+    const existingMovie = await database.listDocuments(DATABASE_ID, 'saveMovie', [
       Query.equal('id', movie.id),
     ]);
     const docId = existingMovie.documents[0]?.$id;
 
     if (!docId) {
-      await database.createDocument(DATABASE_ID, COLLECTION_ID.saveMovie, ID.unique(), {
+      await database.createDocument(DATABASE_ID, 'saveMovie', ID.unique(), {
         // user_id: client.getUser()?.$id,
         id: movie.id,
         title: movie.title,
@@ -81,7 +78,7 @@ export const saveMovie = async (movie: Movie) => {
       console.log("Movie saved successfully");
     }
     else {
-      await database.updateDocument(DATABASE_ID, COLLECTION_ID.saveMovie, docId, {
+      await database.updateDocument(DATABASE_ID, 'saveMovie', docId, {
         isSave: false,
       });
       console.log("Movie removed successfully");
@@ -95,7 +92,7 @@ export const saveMovie = async (movie: Movie) => {
 
 export const getSavedMovies = async (): Promise<Movie[] | undefined> => {
   try {
-    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID.saveMovie, [
+    const result = await database.listDocuments(DATABASE_ID,'saveMovie', [
       Query.equal('isSave', true),
     ]);
     return result.documents as unknown as Movie[];
